@@ -232,7 +232,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06351cb4c15862f4ea5f29cd60ee4a10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chessPiece: {fileID: 974744780502143399, guid: 6a64229c1d28a2245b14bb60782b3aad, type: 3}
+  bishopLight: {fileID: -4883425927913091535, guid: 28a952e259c5a7048bb95c3d0cccbd26, type: 3}
+  bishopDark: {fileID: -6337411087098724203, guid: da1b6b19ac9981744af5bfe27cf28ddc, type: 3}
+  kingLight: {fileID: 118605352515141120, guid: 3428e63f0b6072f41bd01f6edde09eb1, type: 3}
+  kingDark: {fileID: -8462484568206669707, guid: eaca98f148c6ea54a862821d80841cbc, type: 3}
+  knightLight: {fileID: -4364206905126770593, guid: d20027bf1cc085e4cbdbe03150581a48, type: 3}
+  knightDark: {fileID: -2311253875691962525, guid: a9a3e4de327ff084ca6d229ae1bb1f4d, type: 3}
+  pawnLight: {fileID: 5907884353980106178, guid: 6a64229c1d28a2245b14bb60782b3aad, type: 3}
+  pawnDark: {fileID: 3042205245231159026, guid: 3eed917f360d74044ac38079080cae1e, type: 3}
+  queenLight: {fileID: -8381764581063346179, guid: 2ab7005d8db7742438d505b55a7384db, type: 3}
+  queenDark: {fileID: 4667494478441182759, guid: 062bc1362079dcb43b870bb6e43ca087, type: 3}
+  rookLight: {fileID: 2074898588338123115, guid: 208e1bc2a5b9e254ca281ceda3a3f841, type: 3}
+  rookDark: {fileID: 8696734454893160697, guid: e6b2e358323b0c14c96d3539ab252e88, type: 3}
 --- !u!1 &1559372453
 GameObject:
   m_ObjectHideFlags: 0

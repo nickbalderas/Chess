@@ -1,36 +1,50 @@
+using System;
+using UnityEngine;
+
 public class BoardSquare
 {
-    private GridXZ<BoardSquare> _grid;
-    public string X;
-    public string Z;
-    public ChessPiece ChessPiece;
+    private readonly GridXZ<BoardSquare> _grid;
+    public ChessPiece chessPiece;
+    public string x;
+    public string z;
 
     public BoardSquare(GridXZ<BoardSquare> grid, string x, string z)
     {
         _grid = grid;
-        X = x;
-        Z = z;
+        this.x = x;
+        this.z = z;
     }
 
     public void SetChessPiece(ChessPiece chessPiece)
     {
-        ChessPiece = chessPiece;
-        _grid.TriggerGridObjectChanged(X, Z);
+        this.chessPiece = chessPiece;
+        _grid.TriggerGridObjectChanged(x, z);
     }
 
-    public void ClearTransform()
+    public void RemoveChessPiece()
     {
-        this.ChessPiece = null;
-        _grid.TriggerGridObjectChanged(X, Z);
+        chessPiece = null;
+        _grid.TriggerGridObjectChanged(x, z);
     }
 
     public bool CanBuild()
     {
-        return ChessPiece == null;
+        return chessPiece == null;
+    }
+
+    public void GetNumericCoordinates(out int x, out int z)
+    {
+        x = Array.IndexOf(ChessBoard.XAxisValues, this.x);
+        z = Array.IndexOf(ChessBoard.ZAxisValues, this.z);
+    }
+
+    public bool IsSelf(BoardSquare boardSquare)
+    {
+        return x == boardSquare.x && z == boardSquare.z;
     }
 
     public override string ToString()
     {
-        return X + Z + "\n" + ChessPiece;
+        return x + z + "\n" + chessPiece;
     }
 }

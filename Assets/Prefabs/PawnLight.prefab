@@ -199,7 +199,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7776596348923010436}
-  - component: {fileID: 974744780502143399}
+  - component: {fileID: 5907884353980106178}
   m_Layer: 0
   m_Name: PawnLight
   m_TagString: Untagged
@@ -224,7 +224,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &974744780502143399
+--- !u!114 &5907884353980106178
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -233,11 +233,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 6558398011413694708}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67f32acaad20bc947940b0209e2f536d, type: 3}
+  m_Script: {fileID: 11500000, guid: 49b89f60dcc642ca860d619bf2193a26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  X: 
-  Z: 
+  boardPosition: {fileID: 0}
+  isLight: 1
+  isKnight: 0
+  isPawn: 1
 --- !u!1001 &4017558602512137978
 PrefabInstance:
   m_ObjectHideFlags: 0
