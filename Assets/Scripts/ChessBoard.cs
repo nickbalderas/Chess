@@ -56,11 +56,14 @@ public class ChessBoard : MonoBehaviour
             }
         }
 
-        foreach (var coordinate in availableMoves)
+        var showDebug = false;
+        if (showDebug)
         {
-            Debug.Log(coordinate.X + " , " + coordinate.Z);
+            foreach (var coordinate in availableMoves)
+            {
+                Debug.Log(coordinate.X + " , " + coordinate.Z);
+            }
         }
-        
         return availableMoves;
     }
 
