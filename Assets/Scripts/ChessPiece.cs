@@ -121,7 +121,7 @@ public class ChessPiece : MonoBehaviour
        return diagonalMovement;
    }
 
-   protected virtual List<List<XZCoordinate>> GetPossibleMoves()
+   protected virtual List<XZCoordinate> GetPossibleMoves()
    {
        return null;
    }

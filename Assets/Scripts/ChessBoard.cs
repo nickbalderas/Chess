@@ -35,40 +35,32 @@ public class ChessBoard : MonoBehaviour
         InitializeChessBoard();
     }
 
-    public static List<XZCoordinate> AvailableMoves(List<XZCoordinate> possibleMoves, ChessPiece chessPiece)
+    public static List<XZCoordinate> AvailableMoves(List<List<XZCoordinate>> possibleMoves, ChessPiece chessPiece)
     {
         var availableMoves = new List<XZCoordinate>();
-        foreach (var coordinate in possibleMoves)
-        {
-            BoardSquare boardSquare = Grid.GetGridObject(coordinate.X, coordinate.Z);
-            if (!boardSquare.chessPiece)
-            {
-                availableMoves.Add(coordinate);
-                continue;
-            }
-            if (boardSquare.chessPiece.isLight != chessPiece.isLight) availableMoves.Add(coordinate);
-        }
 
-        return availableMoves;
-    }
-    
-    public static List<XZCoordinate> AvailableMoves(XZCoordinate[][] possibleMoves, ChessPiece chessPiece)
-    {
-        var availableMoves = new List<XZCoordinate>();
-        for (int i = 0; i < possibleMoves.GetLength(0); i++)
+        foreach (var coordinateList in possibleMoves)
         {
-            foreach (var coordinate in possibleMoves[i])
+            foreach (var coordinate in coordinateList)
             {
                 BoardSquare boardSquare = Grid.GetGridObject(coordinate.X, coordinate.Z);
                 if (!boardSquare.chessPiece)
                 {
                     availableMoves.Add(coordinate);
-                    continue;
                 }
-
-                if (boardSquare.chessPiece.isLight != chessPiece.isLight) availableMoves.Add(coordinate);
+                else
+                {
+                    if (boardSquare.chessPiece.isLight != chessPiece.isLight) availableMoves.Add(coordinate);
+                    break;
+                }
             }
         }
+
+        foreach (var coordinate in availableMoves)
+        {
+            Debug.Log(coordinate.X + " , " + coordinate.Z);
+        }
+        
         return availableMoves;
     }
 
