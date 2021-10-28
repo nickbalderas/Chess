@@ -13,12 +13,13 @@ public class GridXZ<TGridObject>
 
     private readonly string[] _zAxisValues;
     private readonly string[] _xAxisValues;
-    
+
     private readonly float _cellSize;
     private readonly Vector3 _originPosition;
     private readonly TGridObject[,] _gridArray;
 
-    public GridXZ(string[] xAxisValues, string[] zAxisValues, float cellSize, Vector3 originPosition, Func<GridXZ<TGridObject>, string, string, TGridObject> createGridObject)
+    public GridXZ(string[] xAxisValues, string[] zAxisValues, float cellSize, Vector3 originPosition, BoardSquareVisual boardSquareVisual,
+        Func<GridXZ<TGridObject>, string, string, BoardSquareVisual, TGridObject> createGridObject)
     {
         _xAxisValues = xAxisValues;
         _zAxisValues = zAxisValues;
@@ -26,12 +27,12 @@ public class GridXZ<TGridObject>
         _originPosition = originPosition;
 
         _gridArray = new TGridObject[xAxisValues.Length, zAxisValues.Length];
-        
+
         for (int x = 0; x < xAxisValues.Length; x++)
         {
             for (int i = 0; i < zAxisValues.Length; i++)
             {
-                _gridArray[x, i] = createGridObject(this, xAxisValues[x], zAxisValues[i]);
+                _gridArray[x, i] = createGridObject(this, xAxisValues[x], zAxisValues[i], boardSquareVisual);
             }
         }
 
@@ -65,7 +66,7 @@ public class GridXZ<TGridObject>
 
     public Vector3 GetWorldPosition(int x, int z)
     {
-        return new Vector3(x, 0,  z) * _cellSize + _originPosition;
+        return new Vector3(x, 0, z) * _cellSize + _originPosition;
     }
 
     public void GetXZ(Vector3 worldPosition, out int x, out int z)
