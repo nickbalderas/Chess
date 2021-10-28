@@ -244,6 +244,7 @@ MonoBehaviour:
   queenDark: {fileID: 4667494478441182759, guid: 062bc1362079dcb43b870bb6e43ca087, type: 3}
   rookLight: {fileID: 2074898588338123115, guid: 208e1bc2a5b9e254ca281ceda3a3f841, type: 3}
   rookDark: {fileID: 8696734454893160697, guid: e6b2e358323b0c14c96d3539ab252e88, type: 3}
+  boardSquareVisual: {fileID: 5314293761437098818, guid: 1f2fc2c1bb716704c932e534976ebf84, type: 3}
 --- !u!1 &1559372453
 GameObject:
   m_ObjectHideFlags: 0

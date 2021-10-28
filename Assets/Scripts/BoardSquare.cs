@@ -4,47 +4,49 @@ using UnityEngine;
 public class BoardSquare
 {
     private readonly GridXZ<BoardSquare> _grid;
-    public ChessPiece chessPiece;
-    public string x;
-    public string z;
+    public readonly BoardSquareVisual BoardSquareVisual;
+    public ChessPiece ChessPiece;
+    private readonly string _x;
+    private readonly string _z;
 
-    public BoardSquare(GridXZ<BoardSquare> grid, string x, string z)
+    public BoardSquare(GridXZ<BoardSquare> grid, string x, string z, BoardSquareVisual boardSquareVisual)
     {
         _grid = grid;
-        this.x = x;
-        this.z = z;
+        _x = x;
+        _z = z;
+        BoardSquareVisual = boardSquareVisual;
     }
 
     public void SetChessPiece(ChessPiece chessPiece)
     {
-        this.chessPiece = chessPiece;
-        _grid.TriggerGridObjectChanged(x, z);
+        ChessPiece = chessPiece;
+        _grid.TriggerGridObjectChanged(_x, _z);
     }
 
     public void RemoveChessPiece()
     {
-        chessPiece = null;
-        _grid.TriggerGridObjectChanged(x, z);
+        ChessPiece = null;
+        _grid.TriggerGridObjectChanged(_x, _z);
     }
 
     public bool CanBuild()
     {
-        return chessPiece == null;
+        return ChessPiece == null;
     }
 
     public void GetNumericCoordinates(out int x, out int z)
     {
-        x = Array.IndexOf(ChessBoard.XAxisValues, this.x);
-        z = Array.IndexOf(ChessBoard.ZAxisValues, this.z);
+        x = Array.IndexOf(ChessBoard.XAxisValues, this._x);
+        z = Array.IndexOf(ChessBoard.ZAxisValues, this._z);
     }
 
     public bool IsSelf(BoardSquare boardSquare)
     {
-        return x == boardSquare.x && z == boardSquare.z;
+        return _x == boardSquare._x && _z == boardSquare._z;
     }
 
     public override string ToString()
     {
-        return x + z + "\n" + chessPiece;
+        return _x + _z + "\n" + ChessPiece;
     }
 }

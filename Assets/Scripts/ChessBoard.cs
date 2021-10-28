@@ -16,6 +16,7 @@ public class ChessBoard : MonoBehaviour
     [SerializeField] private ChessPiece queenDark;
     [SerializeField] private ChessPiece rookLight;
     [SerializeField] private ChessPiece rookDark;
+    [SerializeField] private BoardSquareVisual boardSquareVisual;
 
     public static readonly string[] XAxisValues = new string[] {"a", "b", "c", "d", "e", "f", "g", "h"};
     public static readonly string[] ZAxisValues = new string[] {"1", "2", "3", "4", "5", "6", "7", "8"};
@@ -23,16 +24,21 @@ public class ChessBoard : MonoBehaviour
     public static List<BoardSquareStruct> startingPositions = new List<BoardSquareStruct>();
     public static GridXZ<BoardSquare> Grid;
 
+    private Transform _transform;
+
     private void Awake()
     {
+        _transform = GetComponent<Transform>();
         float cellSize = 10f;
-        Grid = new GridXZ<BoardSquare>(XAxisValues, ZAxisValues, cellSize, Vector3.zero,
-            (GridXZ<BoardSquare> g, string x, string z) => new BoardSquare(g, x, z));
+        Grid = new GridXZ<BoardSquare>(XAxisValues, ZAxisValues, cellSize, Vector3.zero, boardSquareVisual,
+            (GridXZ<BoardSquare> g, string x, string z, BoardSquareVisual bsv) =>
+                new BoardSquare(g, x, z, bsv));
     }
 
     private void Start()
     {
-        InitializeChessBoard();
+        InitializeBoardSquares();
+        InitializeChessPieces();
     }
 
     public static List<XZCoordinate> AvailableMoves(List<List<XZCoordinate>> possibleMoves, ChessPiece chessPiece)
@@ -44,13 +50,13 @@ public class ChessBoard : MonoBehaviour
             foreach (var coordinate in coordinateList)
             {
                 BoardSquare boardSquare = Grid.GetGridObject(coordinate.X, coordinate.Z);
-                if (!boardSquare.chessPiece)
+                if (!boardSquare.ChessPiece)
                 {
                     availableMoves.Add(coordinate);
                 }
                 else
                 {
-                    if (boardSquare.chessPiece.isLight != chessPiece.isLight) availableMoves.Add(coordinate);
+                    if (boardSquare.ChessPiece.isLight != chessPiece.isLight) availableMoves.Add(coordinate);
                     break;
                 }
             }
@@ -64,6 +70,7 @@ public class ChessBoard : MonoBehaviour
                 Debug.Log(coordinate.X + " , " + coordinate.Z);
             }
         }
+
         return availableMoves;
     }
 
@@ -77,7 +84,7 @@ public class ChessBoard : MonoBehaviour
         }
     }
 
-    private void InitializeChessBoard()
+    private void InitializeChessPieces()
     {
         startingPositions.Add(new BoardSquareStruct(new XZCoordinate(0, 0), rookLight));
         startingPositions.Add(new BoardSquareStruct(new XZCoordinate(7, 0), rookLight));
@@ -112,7 +119,23 @@ public class ChessBoard : MonoBehaviour
             BoardSquare square = Grid.GetGridObject(x, z);
             var chessPiece = Instantiate(boardSquare.ChessPiece, Grid.GetWorldPosition(x, z), Quaternion.identity);
             square.SetChessPiece(chessPiece);
-            square.chessPiece.boardPosition = square;
+            square.ChessPiece.boardPosition = square;
+        }
+    }
+
+    private void InitializeBoardSquares()
+    {
+        for (int x = 0; x < XAxisValues.Length; x++)
+        {
+            for (int z = 0; z < ZAxisValues.Length; z++)
+            {
+                var color = (x + z) % 2 == 0 ? BoardSquareVisual.SquareColor.Dark : BoardSquareVisual.SquareColor.Light;
+                BoardSquare square = Grid.GetGridObject(x, z);
+                var boardSquareVisual = Instantiate(square.BoardSquareVisual, Grid.GetWorldPosition(x, z) + new Vector3(10f, 0.2f, 10f) * .5f,
+                    Quaternion.Euler(90f, 0,0));
+                boardSquareVisual.transform.parent = _transform;
+                boardSquareVisual.SetColor(color);
+            }
         }
     }
 }
