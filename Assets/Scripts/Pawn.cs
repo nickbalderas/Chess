@@ -9,6 +9,7 @@ public class Pawn : ChessPiece
     {
         boardPosition.GetNumericCoordinates(out var x, out var z);
         var possibleMoves = ZAxisMovement(true, _hasMoved ? 1 : 2);
+        DiagonalMovement(true, 1).ForEach(coordinateList => possibleMoves.Add(coordinateList));
         foreach (var cPossibleMove in possibleMoves)
         {
             cPossibleMove.ForEach(move => Debug.Log(move.X + " , " + move.Z));
@@ -16,5 +17,4 @@ public class Pawn : ChessPiece
         return possibleMoves;
         // return ChessBoard.AvailableMoves(possibleMoves, this);
     }
-
 }

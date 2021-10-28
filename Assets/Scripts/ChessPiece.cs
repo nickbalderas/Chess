@@ -86,15 +86,32 @@ public class ChessPiece : MonoBehaviour
        return xAxisMovement;
    }
 
-   protected List<List<XZCoordinate>> DiagonalMovement()
+   protected List<List<XZCoordinate>> DiagonalMovement(bool isRestricted, int value = 0)
    {
        if (isKnight) return null;
        boardPosition.GetNumericCoordinates(out var x, out var z);
-       var backRightSet = BackRightGridMovement(x, z);
-       var backLeftSet = BackLeftGridMovement(x, z);
-       var frontLeftSet = FrontLeftGridMovement(x, z);
-       var frontRightSet = FrontRightGridMovement(x, z);
-       
+       var backRightSet = new List<XZCoordinate>();
+       var backLeftSet = new List<XZCoordinate>();
+       var frontLeftSet = new List<XZCoordinate>();
+       var frontRightSet = new List<XZCoordinate>();
+
+       if (isPawn && isLight)
+       {
+           backRightSet = BackRightGridMovement(x, z, isRestricted, value);
+           backLeftSet = BackLeftGridMovement(x, z, isRestricted, value);
+       } else if (isPawn && !isLight)
+       {
+           frontLeftSet = FrontLeftGridMovement(x, z, isRestricted, value);
+           frontRightSet = FrontRightGridMovement(x, z, isRestricted, value);
+       }
+       else
+       {
+           backRightSet = BackRightGridMovement(x, z);
+           backLeftSet = BackLeftGridMovement(x, z);
+           frontLeftSet = FrontLeftGridMovement(x, z);
+           frontRightSet = FrontRightGridMovement(x, z);
+       }
+
        var diagonalMovement = new List<List<XZCoordinate>> {backLeftSet, backRightSet, frontLeftSet, frontRightSet};
        foreach (var set in diagonalMovement)
        {
@@ -109,45 +126,65 @@ public class ChessPiece : MonoBehaviour
        return null;
    }
    
-   private List<XZCoordinate> BackRightGridMovement(int x, int z)
+   private List<XZCoordinate> BackRightGridMovement(int x, int z, bool isRestricted = false, int value = 0)
    {
        var coordinates = new List<XZCoordinate>();
-       for (int i = x + 1, j = z + 1; i <= 7 && j <= 7; i++, j++)
+       for (int i = x + 1, j = z + 1; GetCondition(x, z, i, j); i++, j++)
        {
            coordinates.Add(new XZCoordinate(i, j));
+       }
+
+       bool GetCondition(int x, int z, int i, int j)
+       {
+           return isRestricted ? i == x + value && j == z + value : i <= 7 && j <= 7;
        }
 
        return coordinates;
    }
    
-   private List<XZCoordinate> BackLeftGridMovement(int x, int z)
+   private List<XZCoordinate> BackLeftGridMovement(int x, int z, bool isRestricted = false, int value = 0)
    {
        var coordinates = new List<XZCoordinate>();
-       for (int i = x - 1, j = z + 1; i >= 0 && j <= 7; i--, j++)
+       for (int i = x - 1, j = z + 1; GetCondition(x, z, i, j); i--, j++)
        {
            coordinates.Add(new XZCoordinate(i, j));
+       }
+       
+       bool GetCondition(int x, int z, int i, int j)
+       {
+           return isRestricted ? i == x - value && j == z + value : i >= 0 && j <= 7;
        }
 
        return coordinates;
    }
    
-   private List<XZCoordinate> FrontLeftGridMovement(int x, int z)
+   private List<XZCoordinate> FrontLeftGridMovement(int x, int z, bool isRestricted = false, int value = 0)
    {
        var coordinates = new List<XZCoordinate>();
-       for (int i = x - 1, j = z - 1; i >= 0 && j >= 0; i--, j--)
+       for (int i = x - 1, j = z - 1; GetCondition(x, z, i, j); i--, j--)
        {
            coordinates.Add(new XZCoordinate(i, j));
+       }
+       
+       bool GetCondition(int x, int z, int i, int j)
+       {
+           return isRestricted ? i == x - value && j == z - value : i >= 0 && j >= 0;
        }
 
        return coordinates;
    }
    
-   private List<XZCoordinate> FrontRightGridMovement(int x, int z)
+   private List<XZCoordinate> FrontRightGridMovement(int x, int z, bool isRestricted = false, int value = 0)
    {
        var coordinates = new List<XZCoordinate>();
-       for (int i = x + 1, j = z - 1; i <= 7 && j >= 0; i++, j--)
+       for (int i = x + 1, j = z - 1; GetCondition(x, z, i, j); i++, j--)
        {
            coordinates.Add(new XZCoordinate(i, j));
+       }
+       
+       bool GetCondition(int x, int z, int i, int j)
+       {
+           return isRestricted ? i == x + value && j == z - value : i <= 7 && j >= 0;
        }
 
        return coordinates;

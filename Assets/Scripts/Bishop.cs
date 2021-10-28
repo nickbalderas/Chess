@@ -7,7 +7,7 @@ public class Bishop : ChessPiece
     {
         boardPosition.GetNumericCoordinates(out var x, out var z);
 
-        var possibleMoves = DiagonalMovement();
+        var possibleMoves = DiagonalMovement(false);
         foreach (var coordinateList in possibleMoves)
         {
             coordinateList.ForEach(coordinate => Debug.Log(coordinate.X + " , " + coordinate.Z));

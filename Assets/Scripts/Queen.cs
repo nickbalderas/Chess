@@ -9,7 +9,7 @@ public class Queen : ChessPiece
         boardPosition.GetNumericCoordinates(out var x, out var z);
         var possibleMoves = XAxisMovement(false).ToList();
         ZAxisMovement(false).ForEach(coordinateList => possibleMoves.Add(coordinateList));
-        DiagonalMovement().ForEach(coordinateList => possibleMoves.Add(coordinateList));
+        DiagonalMovement(false).ForEach(coordinateList => possibleMoves.Add(coordinateList));
 
         foreach (var cPossibleMove in possibleMoves)
         {
