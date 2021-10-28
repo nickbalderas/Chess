@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public class Knight : ChessPiece
 {
-    protected override List<List<XZCoordinate>> GetPossibleMoves()
+    protected override List<XZCoordinate> GetPossibleMoves()
     {
         boardPosition.GetNumericCoordinates(out var x, out var z);
         var possibleMoves = new List<List<XZCoordinate>>
@@ -12,12 +12,18 @@ public class Knight : ChessPiece
             new List<XZCoordinate>(new List<XZCoordinate> {new XZCoordinate(x + 1, z + 2)}),
             new List<XZCoordinate>(new List<XZCoordinate> {new XZCoordinate(x + 1, z - 2)}),
 
-            new List<XZCoordinate>(new List<XZCoordinate> {new XZCoordinate(x + 1, z - 2)}),
-            new List<XZCoordinate>(new List<XZCoordinate> {new XZCoordinate(x - 1, z - 2)}),
-            new List<XZCoordinate>(new List<XZCoordinate> {new XZCoordinate(x + 1, z + 2)}),
-            new List<XZCoordinate>(new List<XZCoordinate> {new XZCoordinate(x - 1, z + 2)}),
+            new List<XZCoordinate>(new List<XZCoordinate> {new XZCoordinate(x + 2, z - 1)}),
+            new List<XZCoordinate>(new List<XZCoordinate> {new XZCoordinate(x + 2, z + 1)}),
+            new List<XZCoordinate>(new List<XZCoordinate> {new XZCoordinate(x - 2, z - 1)}),
+            new List<XZCoordinate>(new List<XZCoordinate> {new XZCoordinate(x - 2, z + 1)}),
         };
-        return possibleMoves;
-        // return ChessBoard.AvailableMoves(possibleMoves, this);
+        
+        foreach (var set in possibleMoves)
+        {
+            set.RemoveAll(coordinate =>
+                coordinate.X < 0 || coordinate.Z < 0 || coordinate.X > 7 || coordinate.Z > 7);
+        }
+        
+        return ChessBoard.AvailableMoves(possibleMoves, this);
     }
 }
