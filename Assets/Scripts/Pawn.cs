@@ -4,11 +4,26 @@ public class Pawn : ChessPiece
 {
     private bool _hasMoved;
     
-    protected override List<XZCoordinate> GetPossibleMoves()
+    protected override void GetPossibleMoves()
     {
-        boardPosition.GetNumericCoordinates(out var x, out var z);
+        BoardPosition.GetNumericCoordinates(out var x, out var z);
         var possibleMoves = ZAxisMovement(true, _hasMoved ? 1 : 2);
-        DiagonalMovement(true, 1).ForEach(coordinateList => possibleMoves.Add(coordinateList));
-        return ChessBoard.AvailableMoves(possibleMoves, this);
+        foreach (var move in ChessBoard.AvailableMoves(possibleMoves, this))
+        {
+            AvailableMoves.Add(move);
+        }
+    }
+
+    public List<XZCoordinate> GetDiagonalMoves()
+    {
+        var list = new List<XZCoordinate>();
+        foreach (var coordinateList in DiagonalMovement(true, 1))
+        {
+            foreach (var move in coordinateList)
+            {
+                list.Add(move);
+            }
+        }
+        return list;
     }
 }

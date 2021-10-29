@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-
-public class Bishop : ChessPiece
+﻿public class Bishop : ChessPiece
 {
-    protected override List<XZCoordinate> GetPossibleMoves()
+    protected override void GetPossibleMoves()
     {
-        boardPosition.GetNumericCoordinates(out var x, out var z);
+        BoardPosition.GetNumericCoordinates(out var x, out var z);
         var possibleMoves = DiagonalMovement(false);
-        return ChessBoard.AvailableMoves(possibleMoves, this);
+        foreach (var move in ChessBoard.AvailableMoves(possibleMoves, this))
+        {
+            AvailableMoves.Add(move);
+        }
     }
 }

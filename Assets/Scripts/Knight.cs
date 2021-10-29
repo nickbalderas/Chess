@@ -2,9 +2,9 @@ using System.Collections.Generic;
 
 public class Knight : ChessPiece
 {
-    protected override List<XZCoordinate> GetPossibleMoves()
+    protected override void GetPossibleMoves()
     {
-        boardPosition.GetNumericCoordinates(out var x, out var z);
+        BoardPosition.GetNumericCoordinates(out var x, out var z);
         var possibleMoves = new List<List<XZCoordinate>>
         {
             new List<XZCoordinate>(new List<XZCoordinate> {new XZCoordinate(x - 1, z + 2)}),
@@ -24,6 +24,9 @@ public class Knight : ChessPiece
                 coordinate.X < 0 || coordinate.Z < 0 || coordinate.X > 7 || coordinate.Z > 7);
         }
         
-        return ChessBoard.AvailableMoves(possibleMoves, this);
+        foreach (var move in ChessBoard.AvailableMoves(possibleMoves, this))
+        {
+            AvailableMoves.Add(move);
+        }
     }
 }
