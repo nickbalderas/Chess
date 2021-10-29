@@ -1,10 +1,9 @@
 using System;
-using UnityEngine;
 
 public class BoardSquare
 {
     private readonly GridXZ<BoardSquare> _grid;
-    public readonly BoardSquareVisual BoardSquareVisual;
+    public BoardSquareVisual BoardSquareVisual;
     public ChessPiece ChessPiece;
     private readonly string _x;
     private readonly string _z;
@@ -15,6 +14,12 @@ public class BoardSquare
         _x = x;
         _z = z;
         BoardSquareVisual = boardSquareVisual;
+    }
+
+    public void SetBoardSquareVisual(BoardSquareVisual boardSquareVisual)
+    {
+        BoardSquareVisual = boardSquareVisual;
+        _grid.TriggerGridObjectChanged(_x, _z);
     }
 
     public void SetChessPiece(ChessPiece chessPiece)

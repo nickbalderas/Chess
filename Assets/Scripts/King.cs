@@ -3,11 +3,14 @@ using System.Linq;
 
 public class King : ChessPiece
 {
-    protected override List<XZCoordinate> GetPossibleMoves()
+    protected override void GetPossibleMoves()
     {
-        boardPosition.GetNumericCoordinates(out var x, out var z);
+        BoardPosition.GetNumericCoordinates(out var x, out var z);
         var possibleMoves = XAxisMovement(true, 1).ToList();
         ZAxisMovement(true, 1).ForEach(coordinateList => possibleMoves.Add(coordinateList));
-        return ChessBoard.AvailableMoves(possibleMoves, this);
+        foreach (var move in ChessBoard.AvailableMoves(possibleMoves, this))
+        {
+            AvailableMoves.Add(move);
+        }
     }
 }
