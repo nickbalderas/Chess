@@ -4,12 +4,12 @@ using UnityEngine;
 public class ChessPiece : MonoBehaviour
 {
     public BoardSquare BoardPosition;
-    protected readonly List<BoardSquare> AvailableMoves = new List<BoardSquare>();
+    public readonly List<BoardSquare> AvailableMoves = new List<BoardSquare>();
     private Outline _highlight;
     public bool isLight;
     public bool isKnight;
     public bool isPawn;
-    public bool hasBeenSelected;
+    protected bool _hasMoved;
 
     private void Awake()
     {
@@ -17,31 +17,15 @@ public class ChessPiece : MonoBehaviour
         _highlight.enabled = false;
     }
 
-    private void Update()
+    public void Selected()
     {
-        if (!Input.GetMouseButtonDown(0)) return;
-
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (!Physics.Raycast(ray, out var raycastHit, float.MaxValue)) return;
-        ChessBoard.Grid.GetXZ(raycastHit.point, out var x, out var z);
-        BoardSquare boardSquare = ChessBoard.Grid.GetGridObject(x, z);
-        if (boardSquare == null || !BoardPosition.IsSelf(boardSquare)) return;
-        hasBeenSelected = !hasBeenSelected;
-        if (hasBeenSelected) Selected();
-        if (!hasBeenSelected) Unselected();
-    }
-
-    private void Selected()
-    {
-        if (!hasBeenSelected) return;
         GetPossibleMoves();
         HighlightPossibleMoves(true);
         HighlightChessPiece(true);
     }
 
-    private void Unselected()
+    public void Unselected()
     {
-        if (hasBeenSelected) return;
         HighlightPossibleMoves(false);
         HighlightChessPiece(false);
         AvailableMoves.Clear();
@@ -55,7 +39,7 @@ public class ChessPiece : MonoBehaviour
     {
         foreach (var move in AvailableMoves)
         {
-            move.BoardSquareVisual.Highlight(indicator);
+            move.BoardSquareVisual.Highlight(indicator, move.ChessPiece && move.ChessPiece.isLight != isLight);
         }
     }
 
@@ -72,13 +56,17 @@ public class ChessPiece : MonoBehaviour
         }
     }
 
-    private void HandleChessPieceMovement(BoardSquare squareToMoveTo)
+    public void HandleChessPieceMovement(GridXZ<BoardSquare> grid, BoardSquare squareToMoveTo)
     {
-        if (!hasBeenSelected || AvailableMoves.Count <= 0 || !AvailableMoves.Contains(squareToMoveTo)) return;
-        BoardPosition.RemoveChessPiece();
-        squareToMoveTo.SetChessPiece(this);
-        BoardPosition = squareToMoveTo;
+        if (AvailableMoves.Count <= 0 || !AvailableMoves.Contains(squareToMoveTo)) return;
+        
         Unselected();
+        Destroy(gameObject);
+        squareToMoveTo.GetNumericCoordinates(out var x, out var z);
+        var movedChessPiece = Instantiate(this, grid.GetWorldPosition(x, z), Quaternion.identity);
+        movedChessPiece._hasMoved = true;
+        squareToMoveTo.SetChessPiece(movedChessPiece);
+        squareToMoveTo.ChessPiece.BoardPosition = squareToMoveTo;
     }
 
     protected List<List<XZCoordinate>> ZAxisMovement(bool isRestricted, int limit = 0)
@@ -168,10 +156,10 @@ public class ChessPiece : MonoBehaviour
         }
         else
         {
-            backRightSet = BackRightGridMovement(x, z);
-            backLeftSet = BackLeftGridMovement(x, z);
-            frontLeftSet = FrontLeftGridMovement(x, z);
-            frontRightSet = FrontRightGridMovement(x, z);
+            backRightSet = BackRightGridMovement(x, z, isRestricted, value);
+            backLeftSet = BackLeftGridMovement(x, z, isRestricted, value);
+            frontLeftSet = FrontLeftGridMovement(x, z, isRestricted, value);
+            frontRightSet = FrontRightGridMovement(x, z, isRestricted, value);
         }
 
         var diagonalMovement = new List<List<XZCoordinate>> {backLeftSet, backRightSet, frontLeftSet, frontRightSet};
