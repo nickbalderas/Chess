@@ -2,8 +2,6 @@
 
 public class Pawn : ChessPiece
 {
-    private bool _hasMoved;
-    
     protected override void GetPossibleMoves()
     {
         BoardPosition.GetNumericCoordinates(out var x, out var z);

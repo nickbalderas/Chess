@@ -6,13 +6,15 @@ public class BoardSquareVisual : MonoBehaviour
     {
         Light,
         Dark,
-        Highlight
+        Highlight,
+        EnemyHighlight
     }
 
     private Outline _highlight;
     public Material lightMaterial;
     public Material darkMaterial;
     public Material highlightMaterial;
+    public Material enemyHighlight;
 
     private SquareColor _selectedColor;
 
@@ -37,10 +39,13 @@ public class BoardSquareVisual : MonoBehaviour
             case SquareColor.Highlight:
                 GetComponent<Renderer>().material = highlightMaterial;
                 break;
+            case SquareColor.EnemyHighlight:
+                GetComponent<Renderer>().material = enemyHighlight;
+                break;
         }
     }
 
-    public void Highlight(bool indicator)
+    public void Highlight(bool indicator, bool isEnemy = false)
     {
         if (indicator && _highlight.enabled) return;
         if (!indicator && _highlight.enabled)
@@ -50,7 +55,7 @@ public class BoardSquareVisual : MonoBehaviour
         }
         if (indicator && !_highlight.enabled)
         {
-            SetColor(SquareColor.Highlight);
+            SetColor(isEnemy ? SquareColor.EnemyHighlight : SquareColor.Highlight);
             _highlight.enabled = true;
             _highlight.OutlineMode = Outline.Mode.OutlineAll;
             _highlight.OutlineColor = Color.blue;

@@ -8,6 +8,7 @@ public class King : ChessPiece
         BoardPosition.GetNumericCoordinates(out var x, out var z);
         var possibleMoves = XAxisMovement(true, 1).ToList();
         ZAxisMovement(true, 1).ForEach(coordinateList => possibleMoves.Add(coordinateList));
+        DiagonalMovement(true, 1).ForEach(coordinateList => possibleMoves.Add(coordinateList));
         foreach (var move in ChessBoard.AvailableMoves(possibleMoves, this))
         {
             AvailableMoves.Add(move);

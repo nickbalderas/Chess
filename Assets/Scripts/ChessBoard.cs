@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 using BoardSquareStruct = structs.BoardSquare;
 
@@ -25,12 +26,13 @@ public class ChessBoard : MonoBehaviour
     public static GridXZ<BoardSquare> Grid;
 
     private Transform _transform;
+    private GameManager _gameManager;
 
     private void Awake()
     {
+        _gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         _transform = GetComponent<Transform>();
-        float cellSize = 10f;
-        Grid = new GridXZ<BoardSquare>(XAxisValues, ZAxisValues, cellSize, Vector3.zero, boardSquareVisual,
+        Grid = new GridXZ<BoardSquare>(XAxisValues, ZAxisValues, 10f, Vector3.zero, boardSquareVisual,
             (g, x, z, bsv) => new BoardSquare(g, x, z, bsv));
     }
 
@@ -38,6 +40,46 @@ public class ChessBoard : MonoBehaviour
     {
         InitializeBoardSquares();
         InitializeChessPieces();
+    }
+
+    private void Update()
+    {
+        if (!Input.GetMouseButtonDown(0)) return;
+
+        var selectedBoardSquare = HandleSelectedBoardSquare();
+        if (selectedBoardSquare == null) return;
+
+        if (_gameManager.SelectedChessPiece && _gameManager.SelectedChessPiece.AvailableMoves.Contains(selectedBoardSquare))
+        {
+            if (selectedBoardSquare.ChessPiece)
+            {
+                Destroy(selectedBoardSquare.ChessPiece.gameObject);
+            }
+            _gameManager.SelectedChessPiece.HandleChessPieceMovement(Grid, selectedBoardSquare);
+        }
+        else
+        {
+            HandleChessPieceSelection(selectedBoardSquare);
+        }
+        
+    }
+
+    private static BoardSquare HandleSelectedBoardSquare()
+    {
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (!Physics.Raycast(ray, out var raycastHit, float.MaxValue)) return null;
+        Grid.GetXZ(raycastHit.point, out var x, out var z);
+        return Grid.GetGridObject(x, z);
+    }
+
+    private void HandleChessPieceSelection(BoardSquare selectedBoardSquare)
+    {
+        var chessPiece = selectedBoardSquare.ChessPiece;
+        if (chessPiece == null) return;
+        if (!_gameManager.SelectedChessPiece) _gameManager.SetSelectedChessPiece(chessPiece);
+        else if (!selectedBoardSquare.IsSelf(_gameManager.SelectedChessPiece.BoardPosition))
+            _gameManager.SetSelectedChessPiece(chessPiece);
+        else _gameManager.RemoveSelectedChessPiece();
     }
 
     public static List<BoardSquare> AvailableMoves(List<List<XZCoordinate>> possibleMoves, ChessPiece chessPiece)
@@ -55,16 +97,18 @@ public class ChessBoard : MonoBehaviour
                     foreach (var move in pawn.GetDiagonalMoves())
                     {
                         BoardSquare enemySquare = Grid.GetGridObject(move.X, move.Z);
-                        if (enemySquare.ChessPiece && enemySquare.ChessPiece.isLight != pawn.isLight) availableMoves.Add(enemySquare);
+                        if (enemySquare.ChessPiece && enemySquare.ChessPiece.isLight != pawn.isLight)
+                            availableMoves.Add(enemySquare);
                     }
                 }
+
                 if (!boardSquare.ChessPiece)
                 {
                     availableMoves.Add(boardSquare);
                 }
                 else
                 {
-                    if (boardSquare.ChessPiece.isLight != chessPiece.isLight) availableMoves.Add(boardSquare);
+                    if (boardSquare.ChessPiece.isLight != chessPiece.isLight && !chessPiece.isPawn) availableMoves.Add(boardSquare);
                     break;
                 }
             }
