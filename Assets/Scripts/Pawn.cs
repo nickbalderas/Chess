@@ -5,7 +5,7 @@ public class Pawn : ChessPiece
 {
     protected override List<List<XZCoordinate>> UnitSpecificMovement()
     {
-        return ZAxisMovement(true, HasMoved ? 1 : 2);
+        return ZAxisMovement(true, hasMoved ? 1 : 2);
     }
 
     public List<XZCoordinate> GetDiagonalMoves()
