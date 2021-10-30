@@ -10,7 +10,8 @@ public class ChessPiece : MonoBehaviour
     public bool isLight;
     public bool isKnight;
     public bool isPawn;
-    protected bool HasMoved;
+    public bool isKing;
+    public bool hasMoved;
 
     private void Awake()
     {
@@ -67,7 +68,7 @@ public class ChessPiece : MonoBehaviour
         }
     }
 
-    public void HandleMovement(GridXZ<BoardSquare> grid, BoardSquare squareToMoveTo)
+    public virtual void HandleMovement(GridXZ<BoardSquare> grid, BoardSquare squareToMoveTo)
     {
         if (AvailableMoves.Count <= 0 || !AvailableMoves.Contains(squareToMoveTo)) return;
         
@@ -75,7 +76,7 @@ public class ChessPiece : MonoBehaviour
         Destroy(gameObject);
         squareToMoveTo.GetNumericCoordinates(out var x, out var z);
         var movedChessPiece = Instantiate(this, grid.GetWorldPosition(x, z), Quaternion.identity);
-        movedChessPiece.HasMoved = true;
+        movedChessPiece.hasMoved = true;
         squareToMoveTo.SetChessPiece(movedChessPiece);
         squareToMoveTo.ChessPiece.BoardPosition = squareToMoveTo;
     }
@@ -113,7 +114,7 @@ public class ChessPiece : MonoBehaviour
         return zAxisMovement;
     }
 
-    protected IEnumerable<List<XZCoordinate>> XAxisMovement(bool isRestricted, int limit = 0)
+    protected IEnumerable<List<XZCoordinate>> XAxisMovement(bool isRestricted, int limitLeft = 0, int limitRight = 0)
     {
         if (isKnight) return null;
         BoardPosition.GetNumericCoordinates(out var x, out var z);
@@ -121,7 +122,7 @@ public class ChessPiece : MonoBehaviour
         var rightSet = new List<XZCoordinate>();
 
         // Decrease toward left
-        for (int i = x - 1; isRestricted ? i >= x - limit : i >= 0; i--)
+        for (int i = x - 1; isRestricted ? i >= x - limitLeft : i >= 0; i--)
         {
             if (isLight && isPawn) break;
             if (i < 0) break;
@@ -129,7 +130,7 @@ public class ChessPiece : MonoBehaviour
         }
 
         // Increase toward right
-        for (int i = x + 1; isRestricted ? i <= x + limit : i <= 7; i++)
+        for (int i = x + 1; isRestricted ? i <= x + limitRight : i <= 7; i++)
         {
             if (!isLight && isPawn) break;
             if (i > 7) break;
