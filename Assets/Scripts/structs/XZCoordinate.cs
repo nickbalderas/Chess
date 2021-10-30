@@ -1,16 +1,19 @@
-﻿public struct XZCoordinate
+﻿namespace structs
 {
-    public int X;
-    public int Z;
-
-    public XZCoordinate(int x, int z)
+    public readonly struct XZCoordinate
     {
-        X = x;
-        Z = z;
-    }
+        public readonly int X;
+        public readonly int Z;
 
-    public override string ToString()
-    {
-        return X + " , " + Z;
+        public XZCoordinate(int x, int z)
+        {
+            X = x;
+            Z = z;
+        }
+
+        public override string ToString()
+        {
+            return X + " , " + Z;
+        }
     }
 }

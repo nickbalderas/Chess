@@ -1,15 +1,16 @@
 using System.Collections.Generic;
+using structs;
 using UnityEngine;
 
 public class ChessPiece : MonoBehaviour
 {
-    public BoardSquare BoardPosition;
     public readonly List<BoardSquare> AvailableMoves = new List<BoardSquare>();
+    public BoardSquare BoardPosition;
     private Outline _highlight;
     public bool isLight;
     public bool isKnight;
     public bool isPawn;
-    protected bool _hasMoved;
+    protected bool HasMoved;
 
     private void Awake()
     {
@@ -19,23 +20,33 @@ public class ChessPiece : MonoBehaviour
 
     public void Selected()
     {
-        GetPossibleMoves();
-        HighlightPossibleMoves(true);
-        HighlightChessPiece(true);
+        GetMoves();
+        HighlightMoves(true);
+        HighlightSelf(true);
     }
 
     public void Unselected()
     {
-        HighlightPossibleMoves(false);
-        HighlightChessPiece(false);
+        HighlightMoves(false);
+        HighlightSelf(false);
         AvailableMoves.Clear();
     }
 
-    protected virtual void GetPossibleMoves()
+    protected virtual void GetMoves()
     {
+        var possibleMoves = UnitSpecificMovement();
+        foreach (var move in ChessBoard.AvailableMoves(possibleMoves, this))
+        {
+            AvailableMoves.Add(move);
+        }
     }
 
-    private void HighlightPossibleMoves(bool indicator)
+    protected virtual List<List<XZCoordinate>> UnitSpecificMovement()
+    {
+        return new List<List<XZCoordinate>>();
+    }
+
+    private void HighlightMoves(bool indicator)
     {
         foreach (var move in AvailableMoves)
         {
@@ -43,7 +54,7 @@ public class ChessPiece : MonoBehaviour
         }
     }
 
-    private void HighlightChessPiece(bool indicator)
+    private void HighlightSelf(bool indicator)
     {
         if (indicator && _highlight.enabled) return;
         if (!indicator && _highlight.enabled) _highlight.enabled = false;
@@ -56,7 +67,7 @@ public class ChessPiece : MonoBehaviour
         }
     }
 
-    public void HandleChessPieceMovement(GridXZ<BoardSquare> grid, BoardSquare squareToMoveTo)
+    public void HandleMovement(GridXZ<BoardSquare> grid, BoardSquare squareToMoveTo)
     {
         if (AvailableMoves.Count <= 0 || !AvailableMoves.Contains(squareToMoveTo)) return;
         
@@ -64,7 +75,7 @@ public class ChessPiece : MonoBehaviour
         Destroy(gameObject);
         squareToMoveTo.GetNumericCoordinates(out var x, out var z);
         var movedChessPiece = Instantiate(this, grid.GetWorldPosition(x, z), Quaternion.identity);
-        movedChessPiece._hasMoved = true;
+        movedChessPiece.HasMoved = true;
         squareToMoveTo.SetChessPiece(movedChessPiece);
         squareToMoveTo.ChessPiece.BoardPosition = squareToMoveTo;
     }
@@ -175,12 +186,12 @@ public class ChessPiece : MonoBehaviour
     private static List<XZCoordinate> BackRightGridMovement(int x, int z, bool isRestricted = false, int value = 0)
     {
         var coordinates = new List<XZCoordinate>();
-        for (int i = x + 1, j = z + 1; GetCondition(x, z, i, j); i++, j++)
+        for (int i = x + 1, j = z + 1; GetCondition(i, j); i++, j++)
         {
             coordinates.Add(new XZCoordinate(i, j));
         }
 
-        bool GetCondition(int x, int z, int i, int j)
+        bool GetCondition(int i, int j)
         {
             return isRestricted ? i == x + value && j == z + value : i <= 7 && j <= 7;
         }
@@ -191,12 +202,12 @@ public class ChessPiece : MonoBehaviour
     private static List<XZCoordinate> BackLeftGridMovement(int x, int z, bool isRestricted = false, int value = 0)
     {
         var coordinates = new List<XZCoordinate>();
-        for (int i = x - 1, j = z + 1; GetCondition(x, z, i, j); i--, j++)
+        for (int i = x - 1, j = z + 1; GetCondition(i, j); i--, j++)
         {
             coordinates.Add(new XZCoordinate(i, j));
         }
 
-        bool GetCondition(int x, int z, int i, int j)
+        bool GetCondition(int i, int j)
         {
             return isRestricted ? i == x - value && j == z + value : i >= 0 && j <= 7;
         }
@@ -207,12 +218,12 @@ public class ChessPiece : MonoBehaviour
     private static List<XZCoordinate> FrontLeftGridMovement(int x, int z, bool isRestricted = false, int value = 0)
     {
         var coordinates = new List<XZCoordinate>();
-        for (int i = x - 1, j = z - 1; GetCondition(x, z, i, j); i--, j--)
+        for (int i = x - 1, j = z - 1; GetCondition(i, j); i--, j--)
         {
             coordinates.Add(new XZCoordinate(i, j));
         }
 
-        bool GetCondition(int x, int z, int i, int j)
+        bool GetCondition(int i, int j)
         {
             return isRestricted ? i == x - value && j == z - value : i >= 0 && j >= 0;
         }
@@ -223,12 +234,12 @@ public class ChessPiece : MonoBehaviour
     private static List<XZCoordinate> FrontRightGridMovement(int x, int z, bool isRestricted = false, int value = 0)
     {
         var coordinates = new List<XZCoordinate>();
-        for (int i = x + 1, j = z - 1; GetCondition(x, z, i, j); i++, j--)
+        for (int i = x + 1, j = z - 1; GetCondition(i, j); i++, j--)
         {
             coordinates.Add(new XZCoordinate(i, j));
         }
 
-        bool GetCondition(int x, int z, int i, int j)
+        bool GetCondition(int i, int j)
         {
             return isRestricted ? i == x + value && j == z - value : i <= 7 && j >= 0;
         }

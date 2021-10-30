@@ -28,12 +28,6 @@ public class BoardSquare
         _grid.TriggerGridObjectChanged(_x, _z);
     }
 
-    public void RemoveChessPiece()
-    {
-        ChessPiece = null;
-        _grid.TriggerGridObjectChanged(_x, _z);
-    }
-
     public void GetNumericCoordinates(out int x, out int z)
     {
         x = Array.IndexOf(ChessBoard.XAxisValues, this._x);
