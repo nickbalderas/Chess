@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using structs;
 using UnityEngine;
 using BoardSquareStruct = structs.BoardSquare;
 
@@ -55,7 +56,7 @@ public class ChessBoard : MonoBehaviour
             {
                 Destroy(selectedBoardSquare.ChessPiece.gameObject);
             }
-            _gameManager.SelectedChessPiece.HandleChessPieceMovement(Grid, selectedBoardSquare);
+            _gameManager.SelectedChessPiece.HandleMovement(Grid, selectedBoardSquare);
         }
         else
         {
@@ -125,8 +126,8 @@ public class ChessBoard : MonoBehaviour
         StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(6, 0), knightLight));
         StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(2, 0), bishopLight));
         StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(5, 0), bishopLight));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(4, 0), queenLight));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(3, 0), kingLight));
+        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(3, 0), queenLight));
+        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(4, 0), kingLight));
         for (int i = 0; i < XAxisValues.Length; i++)
         {
             StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(i, 1), pawnLight));
@@ -138,8 +139,8 @@ public class ChessBoard : MonoBehaviour
         StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(6, 7), knightDark));
         StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(2, 7), bishopDark));
         StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(5, 7), bishopDark));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(4, 7), queenDark));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(3, 7), kingDark));
+        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(3, 7), queenDark));
+        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(4, 7), kingDark));
         for (int i = 0; i < XAxisValues.Length; i++)
         {
             StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(i, 6), pawnDark));

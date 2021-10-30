@@ -1,15 +1,11 @@
 ﻿using System.Collections.Generic;
+using structs;
 
 public class Pawn : ChessPiece
 {
-    protected override void GetPossibleMoves()
+    protected override List<List<XZCoordinate>> UnitSpecificMovement()
     {
-        BoardPosition.GetNumericCoordinates(out var x, out var z);
-        var possibleMoves = ZAxisMovement(true, _hasMoved ? 1 : 2);
-        foreach (var move in ChessBoard.AvailableMoves(possibleMoves, this))
-        {
-            AvailableMoves.Add(move);
-        }
+        return ZAxisMovement(true, HasMoved ? 1 : 2);
     }
 
     public List<XZCoordinate> GetDiagonalMoves()

@@ -1,15 +1,13 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using structs;
 
 public class Rook : ChessPiece
 {
-    protected override void GetPossibleMoves()
+    protected override List<List<XZCoordinate>> UnitSpecificMovement()
     {
-        BoardPosition.GetNumericCoordinates(out var x, out var z);
-        var possibleMoves = XAxisMovement(false).ToList();
-        ZAxisMovement(false).ForEach(coordinateList => possibleMoves.Add(coordinateList));
-        foreach (var move in ChessBoard.AvailableMoves(possibleMoves, this))
-        {
-            AvailableMoves.Add(move);
-        }
+        var moves = XAxisMovement(false).ToList();
+        ZAxisMovement(false).ForEach(coordinateList => moves.Add(coordinateList));
+        return moves;
     }
 }

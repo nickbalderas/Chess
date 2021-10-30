@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using structs;
 
 public class Knight : ChessPiece
 {
-    protected override void GetPossibleMoves()
+    protected override void GetMoves()
     {
         BoardPosition.GetNumericCoordinates(out var x, out var z);
         var possibleMoves = new List<List<XZCoordinate>>
