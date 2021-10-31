@@ -1,8 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using structs;
+using UnityEngine;
 
 public class Pawn : ChessPiece
 {
+    private enum PawnPromotionPiece
+    {
+        Rook,
+        Knight,
+        Bishop,
+        Queen,
+    }
+    
     protected override List<List<XZCoordinate>> UnitSpecificMovement()
     {
         return ZAxisMovement(true, hasMoved ? 1 : 2);
@@ -25,43 +35,32 @@ public class Pawn : ChessPiece
     {
         if (AvailableMoves.Count <= 0 || !AvailableMoves.Contains(squareToMoveTo)) return;
         squareToMoveTo.GetNumericCoordinates(out var x, out var z);
-       // if (isLight && z == 7 || !isLight && z == 0) HandlePawnPromotion(grid, squareToMoveTo);
-        base.HandleMovement(grid, squareToMoveTo);
+
+        if (isLight && z == 7 || !isLight && z == 0)
+        {
+            GameManager.uiController.ShowPawnPromotionUI();
+            GameManager.uiController.pawnToRookButton.onClick.AddListener(() => HandlePawnPromotion(grid, squareToMoveTo, PawnPromotionPiece.Rook));
+            GameManager.uiController.pawnToKnightButton.onClick.AddListener(() => HandlePawnPromotion(grid, squareToMoveTo, PawnPromotionPiece.Knight));
+            GameManager.uiController.pawnToBishopButton.onClick.AddListener(() => HandlePawnPromotion(grid, squareToMoveTo, PawnPromotionPiece.Bishop));
+            GameManager.uiController.pawnToQueenButton.onClick.AddListener(() => HandlePawnPromotion(grid, squareToMoveTo, PawnPromotionPiece.Queen));
+        }
+        else base.HandleMovement(grid, squareToMoveTo);
     }
 
-    // public void HandlePawnPromotion(GridXZ<BoardSquare> grid, BoardSquare boardSquare)
-    // {
-    //     Destroy(gameObject);
-    //     boardSquare.GetNumericCoordinates(out var x, out var z);
-    //     var pawnPos = ChessBoard.Grid.GetGridObject(x, z);
-    //     var possiblePieces = AssignedPlayer.OpposingPlayer.EliminatedPieces;
-    //     
-    //     
-    //     var optionData = new List<string>();
-    //     optionData.Add("");
-    //     foreach (var piece in possiblePieces)
-    //     {
-    //         optionData.Add(piece.name);
-    //         
-    //     }
-
-
-        // if (possiblePieces.Count <= 0)
-        // {
-        //     base.HandleMovement(grid, boardSquare);
-        //     return;
-        // }
-        // var test = possiblePieces[0];
-        //
-        // test.gameObject.transform.position = ChessBoard.Grid.GetWorldPosition(x, z);
-        // pawnPos.SetChessPiece(test);
-        // pawnPos.ChessPiece.BoardPosition = pawnPos;
-        // pawnPos.ChessPiece.AssignedPlayer = AssignedPlayer;
-        // pawnPos.ChessPiece.gameObject.SetActive(true);
-
-        // var pawnPromotedUnit = Instantiate(AssignedPlayer.OpposingPlayer.EliminatedPieces[0], ChessBoard.Grid.GetWorldPosition(x,z), Quaternion.identity);
-        // pawnPos.SetChessPiece(pawnPromotedUnit);
-        // pawnPos.ChessPiece.BoardPosition = pawnPos;
-        // pawnPos.ChessPiece.AssignedPlayer = AssignedPlayer;
-    // }
+    private void HandlePawnPromotion(GridXZ<BoardSquare> grid, BoardSquare squareToMoveTo, PawnPromotionPiece promotionPiece)
+    {
+        squareToMoveTo.GetNumericCoordinates(out var x, out var z);
+        
+        var selectedOption = promotionPiece + (AssignedPlayer.IsAssignedLight ? "Light" : "Dark");
+        var type = (ChessPieceFactory.ChessPieceID) Enum.Parse(typeof(ChessPieceFactory.ChessPieceID), selectedOption);
+        var selectedPiece = ChessPieceFactory.GetChessPiece(type);
+        
+        var pawnPromotedUnit = Instantiate(selectedPiece, grid.GetWorldPosition(x,z), Quaternion.identity);
+        pawnPromotedUnit.BoardPosition = squareToMoveTo;
+        pawnPromotedUnit.AssignedPlayer = AssignedPlayer;
+        squareToMoveTo.SetChessPiece(pawnPromotedUnit);
+        
+        GameManager.uiController.HidePawnPromotionUI();
+        Destroy(gameObject);
+    }
 }
