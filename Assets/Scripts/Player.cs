@@ -7,7 +7,7 @@ public class Player
     private readonly List<ChessPiece> _chessPieces;
     public readonly List<ChessPiece> EliminatedPieces;
     private readonly List<XZCoordinate> _moveHistory;
-    private bool _isAssignedLight;
+    public readonly bool IsAssignedLight;
     // private bool _isInCheck;
     // private bool _isInCheckMate;
 
@@ -15,7 +15,7 @@ public class Player
     {
         _chessPieces = chessPieces;
         EliminatedPieces = eliminatedPieces;
-        _isAssignedLight = isAssignedLight;
+        IsAssignedLight = isAssignedLight;
         _moveHistory = moveHistory;
         // _isInCheck = false;
         // _isInCheckMate = false;

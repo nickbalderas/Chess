@@ -5,24 +5,11 @@ using BoardSquareStruct = structs.BoardSquare;
 
 public class ChessBoard : MonoBehaviour
 {
-    [SerializeField] private ChessPiece bishopLight;
-    [SerializeField] private ChessPiece bishopDark;
-    [SerializeField] private ChessPiece kingLight;
-    [SerializeField] private ChessPiece kingDark;
-    [SerializeField] private ChessPiece knightLight;
-    [SerializeField] private ChessPiece knightDark;
-    [SerializeField] private ChessPiece pawnLight;
-    [SerializeField] private ChessPiece pawnDark;
-    [SerializeField] private ChessPiece queenLight;
-    [SerializeField] private ChessPiece queenDark;
-    [SerializeField] private ChessPiece rookLight;
-    [SerializeField] private ChessPiece rookDark;
     [SerializeField] private BoardSquareVisual boardSquareVisual;
 
     public static readonly string[] XAxisValues = new string[] {"a", "b", "c", "d", "e", "f", "g", "h"};
     public static readonly string[] ZAxisValues = new string[] {"1", "2", "3", "4", "5", "6", "7", "8"};
-
-    private static readonly List<BoardSquareStruct> StartingPositions = new List<BoardSquareStruct>();
+    
     public static GridXZ<BoardSquare> Grid;
 
     private Transform _transform;
@@ -44,7 +31,7 @@ public class ChessBoard : MonoBehaviour
 
     private void Update()
     {
-        if (!Input.GetMouseButtonDown(0)) return;
+        if (!Input.GetMouseButtonDown(0) || _gameManager.uiController.isDisplaying) return;
 
         var selectedBoardSquare = HandleSelectedBoardSquare();
         if (selectedBoardSquare == null) return;
@@ -68,7 +55,7 @@ public class ChessBoard : MonoBehaviour
 
     private static BoardSquare HandleSelectedBoardSquare()
     {
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var ray = Camera.main!.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(ray, out var raycastHit, float.MaxValue)) return null;
         Grid.GetXZ(raycastHit.point, out var x, out var z);
         return Grid.GetGridObject(x, z);
@@ -121,48 +108,16 @@ public class ChessBoard : MonoBehaviour
 
     private void InitializeChessPieces()
     {
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(0, 0), rookLight));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(7, 0), rookLight));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(1, 0), knightLight));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(6, 0), knightLight));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(2, 0), bishopLight));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(5, 0), bishopLight));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(3, 0), queenLight));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(4, 0), kingLight));
-        for (int i = 0; i < XAxisValues.Length; i++)
-        {
-            StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(i, 1), pawnLight));
-        }
-
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(0, 7), rookDark));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(7, 7), rookDark));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(1, 7), knightDark));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(6, 7), knightDark));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(2, 7), bishopDark));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(5, 7), bishopDark));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(3, 7), queenDark));
-        StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(4, 7), kingDark));
-        for (int i = 0; i < XAxisValues.Length; i++)
-        {
-            StartingPositions.Add(new BoardSquareStruct(new XZCoordinate(i, 6), pawnDark));
-        }
-
-        foreach (var boardSquare in StartingPositions)
+        foreach (var boardSquare in ChessPieceFactory.IssueStandardSet())
         {
             var x = boardSquare.Coordinate.X;
             var z = boardSquare.Coordinate.Z;
             BoardSquare square = Grid.GetGridObject(x, z);
             var chessPiece = Instantiate(boardSquare.ChessPiece, Grid.GetWorldPosition(x, z), Quaternion.identity);
 
-            if (chessPiece.isLight)
-            {
-                _gameManager.LightPlayer.AddToPossession(chessPiece);
-            }
-            else
-            {
-                _gameManager.DarkPlayer.AddToPossession(chessPiece);
-            }
-            
+            if (chessPiece.isLight) _gameManager.LightPlayer.AddToPossession(chessPiece);
+            else _gameManager.DarkPlayer.AddToPossession(chessPiece);
+
             square.SetChessPiece(chessPiece);
             square.ChessPiece.BoardPosition = square;
         }
