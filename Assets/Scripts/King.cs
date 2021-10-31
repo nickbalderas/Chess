@@ -18,9 +18,9 @@ public class King : ChessPiece
     {
         if (AvailableMoves.Count <= 0 || !AvailableMoves.Contains(squareToMoveTo)) return;
         
-        squareToMoveTo.GetNumericCoordinates(out var x, out var z);
-        BoardPosition.GetNumericCoordinates(out var h, out var i);
-        var kingDidCastle = isKing && Math.Abs(h - x) == 2;
+        squareToMoveTo.GetNumericCoordinates(out var x, out _);
+        BoardPosition.GetNumericCoordinates(out var h, out _);
+        var kingDidCastle = classification == PieceType.King && Math.Abs(h - x) == 2;
 
         if (kingDidCastle)
         {
@@ -34,6 +34,7 @@ public class King : ChessPiece
             movedRook.hasMoved = true;
             newRookPosition.SetChessPiece(movedRook);
             newRookPosition.ChessPiece.BoardPosition = newRookPosition;
+            newRookPosition.ChessPiece.AssignedPlayer = AssignedPlayer;
         }
         
         base.HandleMovement(grid, squareToMoveTo);

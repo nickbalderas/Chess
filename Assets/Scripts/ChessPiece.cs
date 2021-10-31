@@ -4,17 +4,28 @@ using UnityEngine;
 
 public class ChessPiece : MonoBehaviour
 {
-    public readonly List<BoardSquare> AvailableMoves = new List<BoardSquare>();
-    public BoardSquare BoardPosition;
-    private Outline _highlight;
-    public bool isLight;
-    public bool isKnight;
-    public bool isPawn;
-    public bool isKing;
-    public bool hasMoved;
-
-    private void Awake()
+    public enum PieceType
     {
+        Pawn,
+        Rook,
+        Knight,
+        Bishop,
+        Queen,
+        King
+    }
+    public readonly List<BoardSquare> AvailableMoves = new List<BoardSquare>();
+    protected GameManager GameManager;
+    public BoardSquare BoardPosition;
+    public Player AssignedPlayer;
+    private Outline _highlight;
+    public PieceType classification;
+    public bool isLight;
+    public bool hasMoved;
+    public bool isEliminated;
+
+    protected virtual void Awake()
+    {
+        GameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         _highlight = GetComponentInChildren<Outline>();
         _highlight.enabled = false;
     }
@@ -78,12 +89,13 @@ public class ChessPiece : MonoBehaviour
         var movedChessPiece = Instantiate(this, grid.GetWorldPosition(x, z), Quaternion.identity);
         movedChessPiece.hasMoved = true;
         squareToMoveTo.SetChessPiece(movedChessPiece);
+        squareToMoveTo.ChessPiece.AssignedPlayer = AssignedPlayer;
         squareToMoveTo.ChessPiece.BoardPosition = squareToMoveTo;
     }
 
     protected List<List<XZCoordinate>> ZAxisMovement(bool isRestricted, int limit = 0)
     {
-        if (isKnight) return null;
+        if (classification == PieceType.Knight) return null;
         BoardPosition.GetNumericCoordinates(out var x, out var z);
         var forwardSet = new List<XZCoordinate>();
         var backwardSet = new List<XZCoordinate>();
@@ -91,7 +103,7 @@ public class ChessPiece : MonoBehaviour
         // Decrease toward front
         for (int i = z - 1; isRestricted ? i >= z - limit : i >= 0; i--)
         {
-            if (isLight && isPawn) break;
+            if (isLight && classification == PieceType.Pawn) break;
             if (i < 0) break;
             backwardSet.Add(new XZCoordinate(x, i));
         }
@@ -99,7 +111,7 @@ public class ChessPiece : MonoBehaviour
         // Increase toward back
         for (int i = z + 1; isRestricted ? i <= z + limit : i <= 7; i++)
         {
-            if (!isLight && isPawn) break;
+            if (!isLight && classification == PieceType.Pawn) break;
             if (i > 7) break;
             forwardSet.Add(new XZCoordinate(x, i));
         }
@@ -116,7 +128,7 @@ public class ChessPiece : MonoBehaviour
 
     protected IEnumerable<List<XZCoordinate>> XAxisMovement(bool isRestricted, int limitLeft = 0, int limitRight = 0)
     {
-        if (isKnight) return null;
+        if (classification == PieceType.Knight) return null;
         BoardPosition.GetNumericCoordinates(out var x, out var z);
         var leftSet = new List<XZCoordinate>();
         var rightSet = new List<XZCoordinate>();
@@ -124,7 +136,7 @@ public class ChessPiece : MonoBehaviour
         // Decrease toward left
         for (int i = x - 1; isRestricted ? i >= x - limitLeft : i >= 0; i--)
         {
-            if (isLight && isPawn) break;
+            if (isLight && classification == PieceType.Pawn) break;
             if (i < 0) break;
             leftSet.Add(new XZCoordinate(i, z));
         }
@@ -132,7 +144,7 @@ public class ChessPiece : MonoBehaviour
         // Increase toward right
         for (int i = x + 1; isRestricted ? i <= x + limitRight : i <= 7; i++)
         {
-            if (!isLight && isPawn) break;
+            if (!isLight && classification == PieceType.Pawn) break;
             if (i > 7) break;
             rightSet.Add(new XZCoordinate(i, z));
         }
@@ -149,19 +161,19 @@ public class ChessPiece : MonoBehaviour
 
     protected List<List<XZCoordinate>> DiagonalMovement(bool isRestricted, int value = 0)
     {
-        if (isKnight) return null;
+        if (classification == PieceType.Knight) return null;
         BoardPosition.GetNumericCoordinates(out var x, out var z);
         var backRightSet = new List<XZCoordinate>();
         var backLeftSet = new List<XZCoordinate>();
         var frontLeftSet = new List<XZCoordinate>();
         var frontRightSet = new List<XZCoordinate>();
 
-        if (isPawn && isLight)
+        if (classification == PieceType.Pawn && isLight)
         {
             backRightSet = BackRightGridMovement(x, z, isRestricted, value);
             backLeftSet = BackLeftGridMovement(x, z, isRestricted, value);
         }
-        else if (isPawn && !isLight)
+        else if (classification == PieceType.Pawn && !isLight)
         {
             frontLeftSet = FrontLeftGridMovement(x, z, isRestricted, value);
             frontRightSet = FrontRightGridMovement(x, z, isRestricted, value);

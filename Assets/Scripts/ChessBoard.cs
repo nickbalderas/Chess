@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using structs;
 using UnityEngine;
 using BoardSquareStruct = structs.BoardSquare;
@@ -54,9 +53,11 @@ public class ChessBoard : MonoBehaviour
         {
             if (selectedBoardSquare.ChessPiece)
             {
-                Destroy(selectedBoardSquare.ChessPiece.gameObject);
+                selectedBoardSquare.ChessPiece.AssignedPlayer.RemoveFromPossession(selectedBoardSquare.ChessPiece);
+                selectedBoardSquare.ChessPiece.gameObject.SetActive(false);
             }
             _gameManager.SelectedChessPiece.HandleMovement(Grid, selectedBoardSquare);
+            _gameManager.RemoveSelectedChessPiece();
         }
         else
         {
@@ -92,7 +93,7 @@ public class ChessBoard : MonoBehaviour
             foreach (var coordinate in coordinateList)
             {
                 BoardSquare boardSquare = Grid.GetGridObject(coordinate.X, coordinate.Z);
-                if (chessPiece.isPawn)
+                if (chessPiece.classification == ChessPiece.PieceType.Pawn)
                 {
                     var pawn = (Pawn) chessPiece;
                     foreach (var move in pawn.GetDiagonalMoves())
@@ -109,7 +110,7 @@ public class ChessBoard : MonoBehaviour
                 }
                 else
                 {
-                    if (boardSquare.ChessPiece.isLight != chessPiece.isLight && !chessPiece.isPawn) availableMoves.Add(boardSquare);
+                    if (boardSquare.ChessPiece.isLight != chessPiece.isLight && chessPiece.classification != ChessPiece.PieceType.Pawn) availableMoves.Add(boardSquare);
                     break;
                 }
             }
@@ -152,6 +153,16 @@ public class ChessBoard : MonoBehaviour
             var z = boardSquare.Coordinate.Z;
             BoardSquare square = Grid.GetGridObject(x, z);
             var chessPiece = Instantiate(boardSquare.ChessPiece, Grid.GetWorldPosition(x, z), Quaternion.identity);
+
+            if (chessPiece.isLight)
+            {
+                _gameManager.LightPlayer.AddToPossession(chessPiece);
+            }
+            else
+            {
+                _gameManager.DarkPlayer.AddToPossession(chessPiece);
+            }
+            
             square.SetChessPiece(chessPiece);
             square.ChessPiece.BoardPosition = square;
         }
