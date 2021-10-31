@@ -9,6 +9,7 @@ public class UIController : MonoBehaviour
     public Button pawnToKnightButton;
     public Button pawnToBishopButton;
     public Button pawnToQueenButton;
+    public Button resetGameButton;
 
     public void ShowPawnPromotionUI()
     {

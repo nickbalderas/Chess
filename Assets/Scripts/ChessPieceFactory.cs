@@ -34,22 +34,35 @@ public class ChessPieceFactory : MonoBehaviour
         KingDark
     }
 
-    private static readonly Dictionary<ChessPieceID, ChessPiece> ChessPieceCatalog = new Dictionary<ChessPieceID, ChessPiece>();
+    private static readonly Dictionary<ChessPieceID, ChessPiece> ChessPieceCatalog =
+        new Dictionary<ChessPieceID, ChessPiece>();
 
     private void Awake()
     {
-        ChessPieceCatalog.Add(ChessPieceID.PawnLight, pawnLight);
-        ChessPieceCatalog.Add(ChessPieceID.PawnDark, pawnDark);
-        ChessPieceCatalog.Add(ChessPieceID.RookLight, rookLight);
-        ChessPieceCatalog.Add(ChessPieceID.RookDark, rookDark);
-        ChessPieceCatalog.Add(ChessPieceID.KnightLight, knightLight);
-        ChessPieceCatalog.Add(ChessPieceID.KnightDark, knightDark);
-        ChessPieceCatalog.Add(ChessPieceID.BishopLight, bishopLight);
-        ChessPieceCatalog.Add(ChessPieceID.BishopDark, bishopDark);
-        ChessPieceCatalog.Add(ChessPieceID.QueenLight, queenLight);
-        ChessPieceCatalog.Add(ChessPieceID.QueenDark, queenDark);
-        ChessPieceCatalog.Add(ChessPieceID.KingLight, kingLight);
-        ChessPieceCatalog.Add(ChessPieceID.KingDark, kingDark);
+        if (!ChessPieceCatalog.ContainsKey(ChessPieceID.PawnLight))
+            ChessPieceCatalog.Add(ChessPieceID.PawnLight, pawnLight);
+        if (!ChessPieceCatalog.ContainsKey(ChessPieceID.PawnDark))
+            ChessPieceCatalog.Add(ChessPieceID.PawnDark, pawnDark);
+        if (!ChessPieceCatalog.ContainsKey(ChessPieceID.RookLight))
+            ChessPieceCatalog.Add(ChessPieceID.RookLight, rookLight);
+        if (!ChessPieceCatalog.ContainsKey(ChessPieceID.RookDark))
+            ChessPieceCatalog.Add(ChessPieceID.RookDark, rookDark);
+        if (!ChessPieceCatalog.ContainsKey(ChessPieceID.KnightLight))
+            ChessPieceCatalog.Add(ChessPieceID.KnightLight, knightLight);
+        if (!ChessPieceCatalog.ContainsKey(ChessPieceID.KnightDark))
+            ChessPieceCatalog.Add(ChessPieceID.KnightDark, knightDark);
+        if (!ChessPieceCatalog.ContainsKey(ChessPieceID.BishopLight))
+            ChessPieceCatalog.Add(ChessPieceID.BishopLight, bishopLight);
+        if (!ChessPieceCatalog.ContainsKey(ChessPieceID.BishopDark))
+            ChessPieceCatalog.Add(ChessPieceID.BishopDark, bishopDark);
+        if (!ChessPieceCatalog.ContainsKey(ChessPieceID.QueenLight))
+            ChessPieceCatalog.Add(ChessPieceID.QueenLight, queenLight);
+        if (!ChessPieceCatalog.ContainsKey(ChessPieceID.QueenDark))
+            ChessPieceCatalog.Add(ChessPieceID.QueenDark, queenDark);
+        if (!ChessPieceCatalog.ContainsKey(ChessPieceID.KingLight))
+            ChessPieceCatalog.Add(ChessPieceID.KingLight, kingLight);
+        if (!ChessPieceCatalog.ContainsKey(ChessPieceID.KingDark))
+            ChessPieceCatalog.Add(ChessPieceID.KingDark, kingDark);
     }
 
     public static ChessPiece GetChessPiece(ChessPieceID chessPieceID)
@@ -69,7 +82,7 @@ public class ChessPieceFactory : MonoBehaviour
             new BoardSquareStruct(new XZCoordinate(5, 0), GetChessPiece(ChessPieceID.BishopLight)),
             new BoardSquareStruct(new XZCoordinate(6, 0), GetChessPiece(ChessPieceID.KnightLight)),
             new BoardSquareStruct(new XZCoordinate(7, 0), GetChessPiece(ChessPieceID.RookLight)),
-            
+
             new BoardSquareStruct(new XZCoordinate(0, 7), GetChessPiece(ChessPieceID.RookDark)),
             new BoardSquareStruct(new XZCoordinate(1, 7), GetChessPiece(ChessPieceID.KnightDark)),
             new BoardSquareStruct(new XZCoordinate(2, 7), GetChessPiece(ChessPieceID.BishopDark)),
@@ -84,7 +97,7 @@ public class ChessPieceFactory : MonoBehaviour
             standardSet.Add(new BoardSquareStruct(new XZCoordinate(i, 1), GetChessPiece(ChessPieceID.PawnLight)));
             standardSet.Add(new BoardSquareStruct(new XZCoordinate(i, 6), GetChessPiece(ChessPieceID.PawnDark)));
         }
-        
+
         return standardSet;
     }
 }
